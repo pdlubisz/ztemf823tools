@@ -49,6 +49,7 @@ elif ( echo $USSD_RESP | grep -q  "Usluga w trakcie wlaczania" )
 then
   RESULT=1
 else
+  sleep 2
   SEND_STATUS=$(curl -s -0 "http://192.168.0.1/goform/goform_set_cmd_process" -H "Host: 192.168.0.1" -H "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0" -H "Accept: application/json, text/javascript, */*; q=0.01" -H "Accept-Language: en-US,en;q=0.5" --compressed -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "X-Requested-With: XMLHttpRequest" -H "Referer: http://192.168.0.1/index.html" -H "Connection: keep-alive" -H "Pragma: no-cache" -H "Cache-Control: no-cache" --data "isTest=false&goformId=USSD_PROCESS&USSD_operator=ussd_send&USSD_send_number=*111*480*1"%"23&notCallback=true")
   RESULT=1
 fi
