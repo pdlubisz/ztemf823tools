@@ -1,22 +1,29 @@
 #!/bin/bash
 
 RESULT=0
+function change_connection {
+  
+  curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=DISCONNECT_NETWORK' 
 
-curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=DISCONNECT_NETWORK' 
+  curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=SET_BEARER_PREFERENCE&BearerPreference=Only_WCDMA'
 
-curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=SET_BEARER_PREFERENCE&BearerPreference=Only_WCDMA'
+  curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=CONNECT_NETWORK'
+}
 
-curl -s 'http://192.168.0.1/goform/goform_set_cmd_process' -H 'Host: 192.168.0.1' -H 'Referer: http://192.168.0.1/index.html' --compressed --data 'goformId=CONNECT_NETWORK'
+function send_ussd {
 
+  SEND_STATUS=$(curl -s -0 "http://192.168.0.1/goform/goform_set_cmd_process" -H "Host: 192.168.0.1" -H "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0" -H "Accept: application/json, text/javascript, */*; q=0.01" -H "Accept-Language: en-US,en;q=0.5" --compressed -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "X-Requested-With: XMLHttpRequest" -H "Referer: http://192.168.0.1/index.html" -H "Connection: keep-alive" -H "Pragma: no-cache" -H "Cache-Control: no-cache" --data "isTest=false&goformId=USSD_PROCESS&USSD_operator=ussd_send&USSD_send_number=*111*480*3"%"23&notCallback=true")
+
+  if (! echo $SEND_STATUS | grep -q success )
+  then
+    RESULT=1
+  fi
+
+}
+
+change_connection
 sleep 4
-
-SEND_STATUS=$(curl -s -0 "http://192.168.0.1/goform/goform_set_cmd_process" -H "Host: 192.168.0.1" -H "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0" -H "Accept: application/json, text/javascript, */*; q=0.01" -H "Accept-Language: en-US,en;q=0.5" --compressed -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "X-Requested-With: XMLHttpRequest" -H "Referer: http://192.168.0.1/index.html" -H "Connection: keep-alive" -H "Pragma: no-cache" -H "Cache-Control: no-cache" --data "isTest=false&goformId=USSD_PROCESS&USSD_operator=ussd_send&USSD_send_number=*111*480*3"%"23&notCallback=true")
-
-if (! echo $SEND_STATUS | grep -q success )
-then
-  RESULT=1
-fi
-
+send_ussd
 sleep 1
 
 #{"result":"success"}{"result":"success"}{"result":"success"}{"result":"success"}{"ussd_write_flag":"15"}{"ussd_write_flag":"15"}{"ussd_write_flag":"16"}Dziekujemy za zgloszenie! Twoja usluga niedlugo zostanie wlaczona, moze nam to zajac maksymalnie do 24 godzin. Wiecej na naszej stronie WWW.
